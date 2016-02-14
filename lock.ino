@@ -436,10 +436,21 @@ void loop() {
     if ( power_level > THRESHOLD_AC ) {
       low_power = false;
     } else {
-      TRACE( PRINT( "low_power" ); );
+      
       lock->clear();
+      
+      // If a master dies (i.e. low power), the clients will automatically follow suit
+      // However, if a client dies, we need to tell master
+      if ( !MASTER ) {
+        packet.device_id = device_id;
+        packet.seq_num = seq_num++;
+        packet.type = EVENT;
+        xmitPacket();
+      }
+      
       delay( 1 );
       return;
+      
     }
   } else if ( power_level < THRESHOLD_BATTERY ) {
     low_power = true;
