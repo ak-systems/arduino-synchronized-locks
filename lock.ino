@@ -453,28 +453,32 @@ void loop() {
   
   if ( low_power ) {
     if ( power_level > THRESHOLD_AC ) {
+      TRACE( PRINTLN( "LEAVING LOW POWER MODE." ); );
       low_power = false;
     } else {
-      
+      TRACE( PRINTLN( "LOW POWER MODE." ); );
       lock->clear();
-      
-      // If a master dies (i.e. low power), the clients will automatically follow suit
-      // However, if a client dies, we need to tell master
-      if ( !MASTER ) {
-        packet.device_id = device_id;
-        packet.seq_num = seq_num++;
-        packet.type = EVENT;
-        xmitPacket();
-      }
-      
       delay( 1 );
       return;
-      
     }
   } else if ( power_level < THRESHOLD_BATTERY ) {
+    
+    TRACE( PRINTLN( "ENTERING LOW POWER MODE." ); );
+    
     low_power = true;
+    
+    // If a master dies (i.e. low power), the clients will automatically follow suit
+    // However, if a client dies, we need to tell master
+    if ( !MASTER && lock->isEngaged() ) {
+      packet.device_id = device_id;
+      packet.seq_num = seq_num++;
+      packet.type = EVENT;
+      xmitPacket();
+    }
+    
     delay( 1 );
     return;
+    
   }
   
   if ( MASTER ) {
