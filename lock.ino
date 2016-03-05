@@ -35,7 +35,7 @@
 #define HEARTBEAT 500
 
 #define TRACE( x ) do { if ( DEBUG ) { x } } while ( 0 )
-#define PRINT( x ) ( Serial.println( x ) )  // TODO: REFACTOR AND CHANGE TO print instead of println
+#define PRINT( x ) ( Serial.print( x ) )
 #define PRINTLN( x ) ( Serial.println( x ) )
 
 //////////////////////////////////////////////////////////////////////////
@@ -303,7 +303,7 @@ inline void updatePowerLevel() {
 
 inline device_t* addDevice( unsigned long id ) {
 
-  TRACE( PRINT( "Adding device." ); );
+  TRACE( PRINTLN( "Adding device." ); );
   
   device_t* d = ( device_t* ) malloc( sizeof( device_t ) );
   
@@ -331,20 +331,20 @@ inline device_t* getDevice( unsigned long id ) {
 }
 
 inline void printPacket() {
-  Serial.print( "device_id: " );
-  Serial.println( packet.device_id );
-  Serial.print( "seq_num: " );
-  Serial.println( packet.seq_num );
-  Serial.print( "type: " );
-  Serial.println( packet.type );
-  Serial.print( "locked: " );
-  Serial.println( packet.locked );
+  PRINT( "device_id: " );
+  PRINTLN( packet.device_id );
+  PRINT( "seq_num: " );
+  PRINTLN( packet.seq_num );
+  PRINT( "type: " );
+  PRINTLN( packet.type );
+  PRINT( "locked: " );
+  PRINTLN( packet.locked );
 }
 
 inline void xmitPacket() {
 
   TRACE(
-    PRINT( "Sending packet." );
+    PRINTLN( "Sending packet." );
     printPacket();
   );
 
@@ -369,7 +369,7 @@ inline bool recvPacket() {
     // Get packet
     radio.read( &packet, sizeof( packet_t ) );
 
-    TRACE( PRINT( "Received packet." ); );
+    TRACE( PRINTLN( "Received packet." ); );
 
     // Get associated device
     device_t* device = getDevice( packet.device_id );
@@ -482,7 +482,7 @@ void loop() {
       heartbeat--;
     } else {
 
-      TRACE( PRINT( "Sending heartbeat sync." ); );
+      TRACE( PRINTLN( "Sending heartbeat sync." ); );
 
       // Send heartbeat sync packet
       packet.device_id = device_id;
