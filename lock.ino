@@ -42,19 +42,45 @@
 #define PRINT( x ) ( Serial.print( x ) )
 #define PRINTLN( x ) ( Serial.println( x ) )
 
-//////////////////////////////////////////////////////////////////////////
+/* -------------------------------------------------------------------------- */
 
+/*
+ * Represents a linked list of communication devices (Arduinos with radios).
+ *
+ * device_id - represents the unique communication id of the radio device.
+ * seq_num   - represents a unique and increasing number across consecutive
+ *             transmission of packets for this device. This value should be
+ *             updated if a packet with a larger seq_num is received for this
+ *             device_id. If a packet is received with a smaller seq_num, then
+ *             it should be ignored.
+ * next      - represents the next device in the the linked list of devices that
+ *             have transmitted packets. NULL if there is no such next device.
+ */
 typedef struct device_t {
   unsigned long id;
   unsigned long seq_num;
   device_t* next;
 } device_t;
 
+/*
+ * Represents the type of data being transmitted in a packet_t. The MASTER only
+ * transmits SYNC packets. Only clients transmit EVENT packets.
+ */
 typedef enum {
   EVENT = 1,
   SYNC = 2
 } packet_type_t;
 
+/*
+ * Data structure used for communicating with other radio devices.
+ *
+ * device_id - represents the unique communication id of a radio device.
+ * seq_num   - represents a unique and increasing number across consecutive
+ *             transmission of packets for this device.
+ * type      - represents the type of information carried by the packet. the
+ *             locked field is only used for SYNC packets.
+ * locked    - represents the current lock state for SYNC packets.
+ */
 typedef struct {
   unsigned long device_id;
   unsigned long seq_num;
