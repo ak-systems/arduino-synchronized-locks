@@ -3,6 +3,9 @@
 #include <SPI.h>
 #include <RF24.h>
 
+// #define PRO_MINI
+#define MICRO
+
 #define DEBUG 0
 
 // RF24 RADIO
@@ -285,7 +288,11 @@ device_t* devices;
 packet_t packet;
 
 // Variables for radio
+#ifdef PRO_MINI
+RF24 radio( 9, 10 );
+#elif MICRO
 RF24 radio( 2, 3 );
+#endif
 const uint64_t pipes[2] = { 0xe7e7e7e7e7LL, 0xc2c2c2c2c2LL };
 
 //////////////////////////////////////////////////////////////////////////
