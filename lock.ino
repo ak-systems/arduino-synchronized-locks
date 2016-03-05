@@ -5,11 +5,14 @@
 
 #define DEBUG 0
 
-// Analog Pins
+// RF24 RADIO
+#define RADIO_CHANNEL 5
+
+// ANALOG PINS
 #define PIN_POWER_LEVEL 4
 #define PIN_MOTOR_FEEDBACK 5
 
-// Digital Pins
+// DIGITAL PINS
 #define PIN_MOTOR_UNLOCK 4
 #define PIN_MOTOR_LOCK 5
 #define PIN_BUTTON1 6
@@ -18,17 +21,19 @@
 #define PIN_LIGHT1 9
 #define PIN_LIGHT2 10
 
+// POWER THRESHOLDS
 #define THRESHOLD_AC 800
 #define THRESHOLD_BATTERY 550
 #define THRESHOLD_LOCK 550
 #define THRESHOLD_UNLOCK 50
 
+// SYNCHRONIZATION
 #define HEARTBEAT_TIMEOUT 1000
 #define HEARTBEAT 500
 
 #define TRACE( x ) do { if ( DEBUG ) { x } } while ( 0 )
-
-#define PRINT( x ) ( Serial.println( x ) )
+#define PRINT( x ) ( Serial.println( x ) )  // TODO: REFACTOR AND CHANGE TO print instead of println
+#define PRINTLN( x ) ( Serial.println( x ) )
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -402,6 +407,13 @@ void setup() {
   lock = new Lock( motor );
 
   radio.begin();
+  radio.setChannel( RADIO_CHANNEL );
+  radio.setAutoAck( 1 );
+  radio.setRetries( 5, 10 );
+  radio.setPayloadSize( sizeof( packet_t ) );
+  radio.setCRCLength( RF24_CRC_8 );
+  radio.setDataRate( RF24_250KBPS );
+  radio.setPALevel( RF24_PA_MAX );
   radio.openWritingPipe( pipes[ 0 ] );
   radio.openReadingPipe( 1, pipes[ 1 ] );
   radio.startListening();
