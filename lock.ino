@@ -6,6 +6,10 @@
 // #define PRO_MINI
 #define MICRO
 
+/*
+ * Set the following to 1 to run debug logic and output debug information to the
+ * serial output.
+ */
 #define DEBUG 0
 
 // RF24 RADIO
